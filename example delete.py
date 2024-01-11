@@ -15,15 +15,17 @@ y = 0
 dif = 500 / 9
 val = 0
 
-#ПОЛЕ
+# ПОЛЕ
 
 from random import sample
 
 a = 3
 side = a * a
 
+
 def pattern(r, c):
     return (a * (r % a) + r // a + c) % side
+
 
 def shuffle(s):
     return sample(s, len(s))
@@ -36,14 +38,12 @@ nums = shuffle(range(1, a * a + 1))
 
 maps = [[nums[pattern(r, c)] for c in cols] for r in rows]
 
-maps_ans = maps #ответы
+maps_ans = maps  # ответы
 
 squares = side * side
 empties = squares * 1 // 4  # ОТ 1 ДО 3 УРОВЕНЬ СЛОЖНОСИ
 for p in sample(range(squares), empties):
     maps[p // side][p % side] = 0
-
-
 
 font1 = pygame.font.SysFont(None, 50)  # но можно найти прикольный шрифт
 font2 = pygame.font.SysFont(None, 20)
@@ -56,6 +56,7 @@ clock = pygame.time.Clock()
 FPS = 50
 
 
+# КАРТИНКИ НАЧАЛО#
 def load_image(name, colorkey=None):
     fullname = os.path.join('data', name)
     if not os.path.isfile(fullname):
@@ -125,6 +126,7 @@ def game_rules():
     draw()
 
 
+# ИГРОВОЙ ДВИЖОК#
 def get_cord(pos):
     global x
     x = pos[0] // dif
@@ -132,19 +134,24 @@ def get_cord(pos):
     y = pos[1] // dif
 
 
+# ВНЕШНЯЯ ОТРИСОВКА ПОЛЯ
 def draw_box():
     for i in range(2):
         pygame.draw.line(screen, (255, 0, 0), (x * dif - 3, (y + i) * dif), (x * dif + dif + 3, (y + i) * dif), 7)
         pygame.draw.line(screen, (255, 0, 0), ((x + i) * dif, y * dif), ((x + i) * dif, y * dif + dif), 7)
 
 
+# отрисовка клеток и их заполнение
 def draw():
     for i in range(9):
         for j in range(9):
-            if maps[i][j] != 0:
+            if maps[i][j] != 0:  # цвет фона
                 pygame.draw.rect(screen, (255, 255, 255), (i * dif, j * dif, dif + 1, dif + 1))
-                text1 = font1.render(str(maps[i][j]), 1, (0, 0, 0))
+                text1 = font1.render(str(maps[i][j]), 1, (0, 0, 0))  # цвет цифр
                 screen.blit(text1, (i * dif + 15, j * dif + 10))
+            else:
+                pygame.draw.rect(screen, (255, 255, 255), (i * dif, j * dif, dif + 1, dif + 1))
+
     for i in range(10):
         if i % 3 == 0:
             thick = 7
@@ -154,21 +161,26 @@ def draw():
         pygame.draw.line(screen, (0, 0, 0), (i * dif, 0), (i * dif, 500), thick)
 
 
+# заполнение значения
 def draw_val(val):
     text1 = font1.render(str(val), 1, (0, 0, 0))
     screen.blit(text1, (x * dif + 15, y * dif + 15))
 
 
+# ОБРАБОТКА ОШИБОК(вообще они не нужны, т.к. выводиться текст, а у нас его нет
+# понять что это
 def raise_error1():
     text1 = font1.render("WRONG !!!", 1, (0, 0, 0))
     screen.blit(text1, (20, 450))
 
 
+# если в клетке 0
 def raise_error2():
     text1 = font1.render("Wrong !!! Not a valid Key", 1, (0, 0, 0))
     screen.blit(text1, (20, 470))
 
 
+# проверка подлинности значения
 def valid(m, i, j, val):
     for it in range(9):
         if m[i][it] == val:
@@ -184,6 +196,7 @@ def valid(m, i, j, val):
     return True
 
 
+# заполнение готовых значений(нам это надо?)
 def solve(maps, i, j):
     while maps[i][j] != 0:
         if i < 8:
@@ -216,9 +229,14 @@ def solve(maps, i, j):
             pygame.display.update()
             pygame.time.delay(50)
     return False
+
+
+# после завершения игры картинкаю добавить кнопку, которая перебрысывает на выбор уровня (заново)
 def final():
-    fon = pygame.transform.scale(load_image('fon.jpg'), ((width, height))) #ФИНАЛЬНАЯ КАРТИНКА
+    fon = pygame.transform.scale(load_image('fon.jpg'), ((width, height)))  # ФИНАЛЬНАЯ КАРТИНКА
     screen.blit(fon, (0, 0))
+
+
 run = True
 flag1 = 0
 flag2 = 0
@@ -290,7 +308,7 @@ if __name__ == '__main__':
                 raise_error2()
             print('False')
             val = 0
-        if maps==maps_ans:
+        if maps == maps_ans:
             final()
         if error == 1:
             raise_error1()
