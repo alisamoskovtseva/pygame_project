@@ -1,4 +1,5 @@
 import random
+from random import choice, sample
 import pygame
 import sys
 import os
@@ -17,7 +18,7 @@ val = 0
 
 # ПОЛЕ
 
-from random import sample
+
 
 a = 3
 side = a * a
@@ -26,17 +27,35 @@ side = a * a
 def pattern(r, c):
     return (a * (r % a) + r // a + c) % side
 
+c = 0
+while c != 9:
+    c = 0
+    hor = [set(range(1, 10)) for _ in range(10)]
+    ver = [set(range(1, 10)) for _ in range(10)]
+    kvadr = [[set(range(1, 10)), set(range(1, 10)), set(range(1, 10))] for _ in range(3)]
+    maps = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+    for i in range(9):
+        for j in range(9):
 
-def shuffle(s):
-    return sample(s, len(s))
-
-
-rBase = range(a)
-rows = [g * a + r for g in shuffle(rBase) for r in shuffle(rBase)]
-cols = [g * a + c for g in shuffle(rBase) for c in shuffle(rBase)]
-nums = shuffle(range(1, a * a + 1))
-
-maps = [[nums[pattern(r, c)] for c in cols] for r in rows]
+            a = hor[i] & ver[j] & kvadr[i // 3][j // 3]
+            a = list(a)
+            if a:
+                r = random.choice(a)
+                maps[i][j] = r
+                hor[i].remove(r)
+                ver[j].remove(r)
+                kvadr[i // 3][j // 3].remove(r)
+    for p in range(len(maps)):
+        if maps[p].count(0) == 0:
+            c += 1
 
 maps_ans = maps  # ответы
 
