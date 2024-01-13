@@ -5,43 +5,40 @@ import sys
 import os
 
 pygame.font.init()
-
 screen = pygame.display.set_mode((500, 500))
-
 img = pygame.image.load('data\судоку.jpg')
 pygame.display.set_icon(img)
-
 x = 0
 y = 0
 dif = 500 / 9
 val = 0
-
-# ПОЛЕ
-
-
-
-a = 3
-side = a * a
-
-
-def pattern(r, c):
-    return (a * (r % a) + r // a + c) % side
-
+q = 3
+side = q * q
 c = 0
+maps = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+
 while c != 9:
     c = 0
     hor = [set(range(1, 10)) for _ in range(10)]
     ver = [set(range(1, 10)) for _ in range(10)]
     kvadr = [[set(range(1, 10)), set(range(1, 10)), set(range(1, 10))] for _ in range(3)]
     maps = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0]]
     for i in range(9):
         for j in range(9):
 
@@ -116,9 +113,8 @@ def start_screen():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
-            elif event.type == pygame.KEYDOWN or \
-                    event.type == pygame.MOUSEBUTTONDOWN:
-                return game_rules()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                game_rules()
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -142,7 +138,14 @@ def game_rules():
         intro_rect.x = 10
         text_coord += intro_rect.height
         screen.blit(string_rendered, intro_rect)
-    draw()
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                draw()
+        pygame.display.flip()
+        clock.tick(FPS)
 
 
 # ИГРОВОЙ ДВИЖОК#
@@ -264,6 +267,8 @@ error = 0
 if __name__ == '__main__':
     running = True
     start_screen()
+    game_rules()
+
     while run:
         screen.fill((255, 255, 255))
         for event in pygame.event.get():
