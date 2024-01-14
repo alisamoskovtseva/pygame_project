@@ -25,12 +25,7 @@ maps = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
-while c != 9:
-    c = 0
-    hor = [set(range(1, 10)) for _ in range(10)]
-    ver = [set(range(1, 10)) for _ in range(10)]
-    kvadr = [[set(range(1, 10)), set(range(1, 10)), set(range(1, 10))] for _ in range(3)]
-    maps = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
+maps_ans = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -39,27 +34,48 @@ while c != 9:
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0]]
-    for i in range(9):
-        for j in range(9):
 
-            a = hor[i] & ver[j] & kvadr[i // 3][j // 3]
-            a = list(a)
-            if a:
-                r = random.choice(a)
-                maps[i][j] = r
-                hor[i].remove(r)
-                ver[j].remove(r)
-                kvadr[i // 3][j // 3].remove(r)
-    for p in range(len(maps)):
-        if maps[p].count(0) == 0:
-            c += 1
 
-maps_ans = maps  # ответы
+class Sudoku1:
+    def sud(self):
+        global maps, c, side, maps_ans
+        while c != 9:
+            c = 0
+            hor = [set(range(1, 10)) for _ in range(10)]
+            ver = [set(range(1, 10)) for _ in range(10)]
+            kvadr = [[set(range(1, 10)), set(range(1, 10)), set(range(1, 10))] for _ in range(3)]
+            maps = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+            for i in range(9):
+                for j in range(9):
 
-squares = side * side
-empties = squares * 1 // 4  # ОТ 1 ДО 3 УРОВЕНЬ СЛОЖНОСИ
-for p in sample(range(squares), empties):
-    maps[p // side][p % side] = 0
+                    a = hor[i] & ver[j] & kvadr[i // 3][j // 3]
+                    a = list(a)
+                    if a:
+                        r = random.choice(a)
+                        maps[i][j] = r
+                        hor[i].remove(r)
+                        ver[j].remove(r)
+                        kvadr[i // 3][j // 3].remove(r)
+            for p in range(len(maps)):
+                if maps[p].count(0) == 0:
+                    c += 1
+            maps_ans = maps  # ответы
+
+            squares = side * side
+            empties = squares * 1 // 4  # УРОВЕНЬ СЛОЖНОСИ 1
+            for p in sample(range(squares), empties):
+                maps[p // side][p % side] = 0
+
+
+
 
 font1 = pygame.font.SysFont(None, 50)  # но можно найти прикольный шрифт
 font2 = pygame.font.SysFont(None, 20)
@@ -267,6 +283,8 @@ rs = 0
 error = 0
 if __name__ == '__main__':
     start_screen()
+    a = Sudoku1()
+    a.sud()
     run = True
     while run:
         screen.fill((255, 255, 255))
