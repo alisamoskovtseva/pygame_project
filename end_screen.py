@@ -11,6 +11,7 @@ clock = pygame.time.Clock()
 FPS = 60
 GRAVITY = 1
 
+
 def load_image(name, colorkey=None):
     fullname = os.path.join('data', name)
     if not os.path.isfile(fullname):
@@ -31,7 +32,9 @@ def terminate():
     pygame.quit()
     sys.exit()
 
+
 screen_rect = (0, 0, width, height)
+
 
 class Feyerverk(pygame.sprite.Sprite):
     fire = [load_image("star.png", -1)]
