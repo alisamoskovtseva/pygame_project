@@ -61,20 +61,18 @@ class Sudoku1:
                     if a:
                         r = random.choice(a)
                         maps[i][j] = r
+                        maps_ans[i][j] = r
                         hor[i].remove(r)
                         ver[j].remove(r)
                         kvadr[i // 3][j // 3].remove(r)
             for p in range(len(maps)):
                 if maps[p].count(0) == 0:
                     c += 1
-            maps_ans = maps  # ответы
-
-            squares = side * side
-            empties = squares * 1 // 4  # УРОВЕНЬ СЛОЖНОСИ 1
-            for p in sample(range(squares), empties):
-                maps[p // side][p % side] = 0
-
-
+        squares = side * side
+        empties = squares * 1 // 4  # УРОВЕНЬ СЛОЖНОСИ 1
+        for p in sample(range(squares), empties):
+            maps[p // side][p % side] = 0
+        print(maps_ans)
 
 
 font1 = pygame.font.SysFont(None, 50)  # но можно найти прикольный шрифт
