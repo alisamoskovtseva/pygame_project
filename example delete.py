@@ -12,8 +12,8 @@ x = 0
 y = 0
 dif = 500 / 9
 val = 0
-q = 3
-side = q * q
+a = 3
+side = a * a
 c = 0
 maps = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -114,7 +114,7 @@ def start_screen():
             if event.type == pygame.QUIT:
                 terminate()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                game_rules()
+                return game_rules()
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -138,12 +138,13 @@ def game_rules():
         intro_rect.x = 10
         text_coord += intro_rect.height
         screen.blit(string_rendered, intro_rect)
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                draw()
+                return draw()
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -260,15 +261,13 @@ def final():
 
 
 run = True
-flag1 = 0
+flag1 = 1
 flag2 = 0
 rs = 0
 error = 0
 if __name__ == '__main__':
-    running = True
     start_screen()
-    game_rules()
-
+    run = True
     while run:
         screen.fill((255, 255, 255))
         for event in pygame.event.get():
