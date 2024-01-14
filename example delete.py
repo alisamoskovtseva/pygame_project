@@ -37,7 +37,7 @@ maps_ans = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
 
 
 class Sudoku1:
-    def sud(self):
+    def sud(self,level):
         global maps, c, side, maps_ans
         while c != 9:
             c = 0
@@ -69,11 +69,9 @@ class Sudoku1:
                 if maps[p].count(0) == 0:
                     c += 1
         squares = side * side
-        empties = squares * 1 // 4  # УРОВЕНЬ СЛОЖНОСИ 1
+        empties = squares * level // 4  # УРОВЕНЬ СЛОЖНОСИ 1-3
         for p in sample(range(squares), empties):
             maps[p // side][p % side] = 0
-        print(maps_ans)
-
 
 font1 = pygame.font.SysFont(None, 50)  # но можно найти прикольный шрифт
 font2 = pygame.font.SysFont(None, 20)
@@ -85,7 +83,23 @@ all_sprites = pygame.sprite.Group()
 clock = pygame.time.Clock()
 FPS = 50
 
+def get_level(pos):
+    global level
+    x=pos[0]
+    y=pos[1]
+    level=0
+    if x>15 and x<150 and y>380 and y<425:
+        level=1
+    elif x>190 and x<320 and y>380 and y<425:
+        level=2
+    elif x>350 and x<480 and y>380 and y<430:
+        level=3
+    print(level)
+    return level
 
+# (15, 379)-(148, 425) - 1 level
+# (189, 379)-(320, 424)-2 level
+# (352, 380)-(479, 427) -3 level
 # КАРТИНКИ НАЧАЛО#
 def load_image(name, colorkey=None):
     fullname = os.path.join('data', name)
@@ -123,11 +137,14 @@ def start_screen():
         intro_rect.x = 10
         text_coord += intro_rect.height
         screen.blit(string_rendered, intro_rect)
+
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
             elif event.type == pygame.MOUSEBUTTONDOWN:
+
                 return game_rules()
         pygame.display.flip()
         clock.tick(FPS)
@@ -140,9 +157,9 @@ def game_rules():
                   "каждая цифра встречалась бы только один раз", "",
                   "Выберите уровень и войдите в игру"]
 
-    fon = pygame.transform.scale(load_image('fon.jpg'), (width, height))
+    fon = pygame.transform.scale(load_image('jon.png'), (width, height))
     screen.blit(fon, (0, 0))
-    font = pygame.font.Font(None, 30)
+    font = pygame.font.Font(None, 25)
     text_coord = 50
     for line in intro_text:
         string_rendered = font.render(line, 1, pygame.Color('white'))
@@ -158,9 +175,15 @@ def game_rules():
             if event.type == pygame.QUIT:
                 terminate()
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                get_level(pos)
                 return draw()
         pygame.display.flip()
         clock.tick(FPS)
+
+
+
+
 
 
 # ИГРОВОЙ ДВИЖОК#
@@ -282,7 +305,7 @@ error = 0
 if __name__ == '__main__':
     start_screen()
     a = Sudoku1()
-    a.sud()
+    a.sud(level)
     run = True
     while run:
         screen.fill((255, 255, 255))
