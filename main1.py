@@ -3,10 +3,8 @@ from random import choice, sample
 import pygame
 import sys
 import os
-import time
-import csv
 
-pygame.font.init()
+pygame.init()
 screen = pygame.display.set_mode((500, 500))
 img = pygame.image.load('data\судоку.jpg')
 pygame.display.set_caption("Aлиса лох объелась блох")
@@ -15,12 +13,12 @@ all_sprites = pygame.sprite.Group()
 clock = pygame.time.Clock()
 FPS = 60
 GRAVITY = 1
-x = 0
-y = 0
+x, y = 0, 0
 dif = 500 / 9
 val = 0
 a = 3
 side = a * a
+width, height = 500, 500
 c = 0
 maps = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -41,11 +39,12 @@ maps_ans = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+level = 0
 
 
 class Sudoku1:
-    def sud(self, level):
-        global maps, c, side, maps_ans
+    def sud(self):
+        global maps, c, side, maps_ans, level
         while c != 9:
             c = 0
             hor = [set(range(1, 10)) for _ in range(10)]
@@ -104,26 +103,20 @@ class Sudoku1:
 font1 = pygame.font.SysFont(None, 50)  # но можно найти прикольный шрифт
 font2 = pygame.font.SysFont(None, 20)
 
-pygame.init()
-size = width, height = 500, 500
-screen = pygame.display.set_mode(size)
-all_sprites = pygame.sprite.Group()
-clock = pygame.time.Clock()
-FPS = 50
-
 
 def get_level(pos):
     global level
     x = pos[0]
     y = pos[1]
-    level = 0
     if x > 15 and x < 150 and y > 380 and y < 425:
         level = 1
+        draw()
     elif x > 190 and x < 320 and y > 380 and y < 425:
         level = 2
+        draw()
     elif x > 350 and x < 480 and y > 380 and y < 430:
         level = 3
-    return level
+        draw()
 
 
 # (15, 379)-(148, 425) - 1 level
@@ -204,8 +197,12 @@ def game_rules():
                 terminate()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
+                # x=pos[0]
+                # y=pos[1]
+                # if (x > 15 and x < 150 and y > 380 and y < 425) or (x > 190 and x < 320 and y > 380 and y < 425) or (x > 350 and x < 480 and y > 380 and y < 430):
                 get_level(pos)
-                return draw()
+                if level:
+                    return
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -225,16 +222,19 @@ def draw_box():
         pygame.draw.line(screen, (255, 0, 0), ((x + i) * dif, y * dif), ((x + i) * dif, y * dif + dif), 7)
 
 
-sec = 0
+#
+# sec = 0
 
 
 # отрисовка клеток и их заполнение
 def draw():
-    global sec
-
-    time.sleep(1)
-    sec += 1
-    print(sec)
+    # global sec
+    #
+    # time.sleep(1)
+    # sec += 1
+    # print(sec)
+    if not level:
+        game_rules()
     for i in range(9):
         for j in range(9):
             if maps[i][j] != 0:  # цвет фона
@@ -255,7 +255,12 @@ def draw():
 
 # заполнение значения
 def draw_val(val):
-    text1 = font1.render(str(val), 1, (0, 0, 0))
+    print(valid(maps, int(x), int(y), val, maps_ans))
+    if valid(maps, int(x), int(y), val, maps_ans):
+        color = (0, 0, 0)
+    else:
+        color = (255, 0, 0)
+    text1 = font1.render(str(val), 1, color)
     screen.blit(text1, (x * dif + 15, y * dif + 15))
 
 
@@ -364,6 +369,7 @@ def final():
         all_sprites.draw(screen)
         pygame.display.flip()
         clock.tick(FPS)
+    pygame.quit()
 
 
 screen_rect = (0, 0, width, height)
@@ -399,18 +405,18 @@ def create_stars(position):
 
 
 run = True
-flag1 = 1
+flag1 = 0
 flag2 = 0
 rs = 0
 error = 0
+is_true = True
 if __name__ == '__main__':
     start_screen()
     a = Sudoku1()
-    a.sud(level)
+    a.sud()
+    print(maps, maps_ans, sep='\n')
     run = True
-    sec = 0
     while run:
-
         screen.fill((255, 255, 255))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -419,6 +425,7 @@ if __name__ == '__main__':
                 flag1 = 1
                 pos = pygame.mouse.get_pos()
                 get_cord(pos)
+                print(x, y)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
                     x -= 1
@@ -453,7 +460,7 @@ if __name__ == '__main__':
                 if event.key == pygame.K_RETURN:
                     flag2 = 1
         if flag2 == 1:
-            if solve(maps, 0, 0) == False:
+            if not solve(maps, 0, 0):
                 error = 1
             else:
                 rs = 1
@@ -463,27 +470,26 @@ if __name__ == '__main__':
             print(int(x))
             print(int(y))
             print(val)
-            if valid(maps, int(x), int(y), val, maps_ans) == True:
-                print('True')
+            if valid(maps, int(x), int(y), val, maps_ans):
+                is_true = True
                 maps[int(x)][int(y)] = val
                 flag1 = 0
             else:
                 maps[int(x)][int(y)] = val
-                print('False')
-                flag1 = 1
+                is_true = False
+                while maps[int(x)][int(y)] != val:
+                    flag1 = 1
             val = 0
 
         if error == 1:
             raise_error1()
 
-        draw()
+        if maps.count([0] * 9) and maps == maps_ans:
+            final()
+        else:
+            draw()
         if flag1 == 1:
             draw_box()
-        if maps == maps_ans:
-            print('eeee')
-            final()
         pygame.display.update()
-    with open("timing.csv", mode="w", encoding='utf-8') as w_file:
-        file_writer = csv.writer(w_file, lineterminator="\r")
-        file_writer.writerow(str(sec))
+
 pygame.quit()
