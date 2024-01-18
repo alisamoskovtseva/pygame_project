@@ -39,12 +39,14 @@ maps_ans = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+table = [[True * 9] for _ in range(10)]
 level = 0
 
 
 class Sudoku1:
     def sud(self):
         global maps, c, side, maps_ans, level
+        c = 0
         while c != 9:
             c = 0
             hor = [set(range(1, 10)) for _ in range(10)]
@@ -59,6 +61,15 @@ class Sudoku1:
                     [0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+            maps_ans = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0]]
             for i in range(9):
                 for j in range(9):
 
@@ -93,7 +104,8 @@ class Sudoku1:
         squares = side * side
         empties = squares * level // 4  # УРОВЕНЬ СЛОЖНОСИ 1-3
         for p in sample(range(squares), empties):
-            maps[p // side][p % side] = 0
+            # maps[p // side][p % side] = 0
+            maps[0][0] = 0
         with open("file.txt", "w") as output:
             for i in ans:
                 output.write(str(i))
@@ -117,6 +129,7 @@ def get_level(pos):
     elif x > 350 and x < 480 and y > 380 and y < 430:
         level = 3
         draw()
+    Sudoku1().sud()
 
 
 # (15, 379)-(148, 425) - 1 level
@@ -256,8 +269,9 @@ def draw():
 # заполнение значения
 def draw_val(val):
     print(valid(maps, int(x), int(y), val, maps_ans))
-    if valid(maps, int(x), int(y), val, maps_ans):
+    if val != maps_ans[int(y)][int(x)]:
         color = (0, 0, 0)
+        print(val == maps_ans[int(y)][int(x)])
     else:
         color = (255, 0, 0)
     text1 = font1.render(str(val), 1, color)
@@ -345,13 +359,26 @@ def solve(maps, i, j):
 
 # после завершения игры картинкаю добавить кнопку, которая перебрысывает на выбор уровня (заново)
 def final():
+    global maps, maps_ans
+    maps = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0]]
     running = True
+    x = create_stars()
+    all_sprites = pygame.sprite.Group()
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
-                create_stars(pygame.mouse.get_pos())
+                return
+        create_stars()
         all_sprites.update()
         fon = pygame.transform.scale(load_image('end_screen.png'), ((width, height)))
         screen.blit(fon, (0, 0))
@@ -380,13 +407,13 @@ class Feyerverk(pygame.sprite.Sprite):
     for scale in (5, 10, 20):
         fire.append(pygame.transform.scale(fire[0], (scale, scale)))
 
-    def __init__(self, pos, dx, dy):
+    def __init__(self, dx, dy):
         super().__init__(all_sprites)
         self.image = random.choice(self.fire)
         self.rect = self.image.get_rect()
 
         self.velocity = [dx, dy]
-        self.rect.x, self.rect.y = pos
+        self.rect.x, self.rect.y = 255, 255
         self.gravity = GRAVITY
 
     def update(self):
@@ -397,11 +424,13 @@ class Feyerverk(pygame.sprite.Sprite):
             self.kill()
 
 
-def create_stars(position):
-    particle_count = 20
+def create_stars():
+    x = []
+    particle_count = 50
     numbers = range(-5, 6)
     for _ in range(particle_count):
-        Feyerverk(position, random.choice(numbers), random.choice(numbers))
+        x.append(Feyerverk(random.choice(numbers), random.choice(numbers)))
+    return x
 
 
 run = True
@@ -412,8 +441,9 @@ error = 0
 is_true = True
 if __name__ == '__main__':
     start_screen()
-    a = Sudoku1()
-    a.sud()
+    # a = Sudoku1()
+    # a.sud()
+    Sudoku1().sud()
     print(maps, maps_ans, sep='\n')
     run = True
     while run:
@@ -484,8 +514,13 @@ if __name__ == '__main__':
         if error == 1:
             raise_error1()
 
-        if maps.count([0] * 9) and maps == maps_ans:
+        if not (maps.count([0] * 9)) and maps == maps_ans:
+            print(maps == maps_ans)
             final()
+            a = Sudoku1()
+            a.sud()
+            level = 0
+
         else:
             draw()
         if flag1 == 1:
