@@ -508,6 +508,7 @@ if __name__ == '__main__':
             print(int(x))
             print(int(y))
             print(val)
+
             if valid(maps, int(x), int(y), val, maps_ans):
                 table[int(x)][int(y)] = True
                 maps[int(x)][int(y)] = val
@@ -517,6 +518,8 @@ if __name__ == '__main__':
                 is_true = False
                 while maps[int(x)][int(y)] != val:
                     flag1 = 1
+            val = 0
+        else:
             val = 0
 
         if error == 1:
