@@ -7,7 +7,7 @@ import os
 pygame.init()
 screen = pygame.display.set_mode((500, 500))
 img = pygame.image.load('data\судоку.jpg')
-pygame.display.set_caption("Aлиса лох объелась блох")
+pygame.display.set_caption("Aлёна лох объелась блох")
 pygame.display.set_icon(img)
 all_sprites = pygame.sprite.Group()
 clock = pygame.time.Clock()
@@ -41,7 +41,7 @@ maps_ans = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0]]
 table = [[True * 9] for _ in range(10)]
 level = 0
-
+count = 0
 
 class Sudoku1:
     def sud(self):
@@ -104,8 +104,8 @@ class Sudoku1:
         squares = side * side
         empties = squares * level // 4  # УРОВЕНЬ СЛОЖНОСИ 1-3
         for p in sample(range(squares), empties):
-            # maps[p // side][p % side] = 0
-            maps[0][0] = 0
+            maps[p // side][p % side] = 0
+
         with open("file.txt", "w") as output:
             for i in ans:
                 output.write(str(i))
@@ -359,7 +359,8 @@ def solve(maps, i, j):
 
 # после завершения игры картинкаю добавить кнопку, которая перебрысывает на выбор уровня (заново)
 def final():
-    global maps, maps_ans
+    global maps, maps_ans, count
+    count= 0
     maps = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -370,29 +371,18 @@ def final():
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0]]
     running = True
-    x = create_stars()
-    all_sprites = pygame.sprite.Group()
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 return
-        create_stars()
+        if count == 0 or count == 1:
+            create_stars()
+            count += 1
         all_sprites.update()
         fon = pygame.transform.scale(load_image('end_screen.png'), ((width, height)))
         screen.blit(fon, (0, 0))
-        font = pygame.font.Font(None, 30)
-        text_coord = 50
-        intro_text = ["Нажмите на подарок"]
-        for line in intro_text:
-            string_rendered = font.render(line, 1, pygame.Color('white'))
-            intro_rect = string_rendered.get_rect()
-            text_coord += 10
-            intro_rect.top = text_coord
-            intro_rect.x = 10
-            text_coord += intro_rect.height
-            screen.blit(string_rendered, intro_rect)
         all_sprites.draw(screen)
         pygame.display.flip()
         clock.tick(FPS)
@@ -414,7 +404,7 @@ class Feyerverk(pygame.sprite.Sprite):
 
         self.velocity = [dx, dy]
         self.rect.x, self.rect.y = 255, 255
-        self.gravity = GRAVITY
+        self.gravity = 0.5
 
     def update(self):
         self.velocity[1] += self.gravity
@@ -425,12 +415,11 @@ class Feyerverk(pygame.sprite.Sprite):
 
 
 def create_stars():
-    x = []
-    particle_count = 50
-    numbers = range(-5, 6)
+    particle_count = 100
+    numbers = range(-10,10)
     for _ in range(particle_count):
-        x.append(Feyerverk(random.choice(numbers), random.choice(numbers)))
-    return x
+        Feyerverk(random.choice(numbers), random.choice(numbers))
+
 
 
 run = True
@@ -441,8 +430,6 @@ error = 0
 is_true = True
 if __name__ == '__main__':
     start_screen()
-    # a = Sudoku1()
-    # a.sud()
     Sudoku1().sud()
     print(maps, maps_ans, sep='\n')
     run = True
