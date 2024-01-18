@@ -232,9 +232,11 @@ def get_cord(pos):
 
 # ВНЕШНЯЯ ОТРИСОВКА ПОЛЯ
 def draw_box():
-    for i in range(2):
-        pygame.draw.line(screen, (255, 0, 0), (x * dif - 3, (y + i) * dif), (x * dif + dif + 3, (y + i) * dif), 7)
-        pygame.draw.line(screen, (255, 0, 0), ((x + i) * dif, y * dif), ((x + i) * dif, y * dif + dif), 7)
+    global table
+    if table[int(x)][int(y)] == False:
+        for i in range(2):
+            pygame.draw.line(screen, (255, 0, 0), (x * dif - 3, (y + i) * dif), (x * dif + dif + 3, (y + i) * dif), 7)
+            pygame.draw.line(screen, (255, 0, 0), ((x + i) * dif, y * dif), ((x + i) * dif, y * dif + dif), 7)
 
 
 #
@@ -269,15 +271,15 @@ def draw():
 
 
 # заполнение значения
-def draw_val(val):
+def draw_val(val, color):
     global table
     print(table)
     if table[int(x)][int(y)] == False:
         if val != maps_ans[int(y)][int(x)]:
-            text1 = font1.render(str(val), 1, (255, 0, 0))
+            text1 = font1.render(str(val), 1, color)
             screen.blit(text1, (x * dif + 15, y * dif + 15))
         else:
-            text1 = font1.render(str(val), 1, (0, 0, 0))
+            text1 = font1.render(str(val), 1, color)
             screen.blit(text1, (x * dif + 15, y * dif + 15))
 
 
@@ -378,8 +380,6 @@ def final():
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0]]
     running = True
-    x = create_stars()
-    all_sprites = pygame.sprite.Group()
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -433,11 +433,10 @@ class Feyerverk(pygame.sprite.Sprite):
 
 
 def create_stars():
-    x = []
     particle_count = 50
     numbers = range(-5, 6)
     for _ in range(particle_count):
-        x.append(Feyerverk(random.choice(numbers), random.choice(numbers)))
+        Feyerverk(random.choice(numbers), random.choice(numbers))
     return x
 
 
@@ -504,7 +503,11 @@ if __name__ == '__main__':
                 rs = 1
             flag2 = 0
         if (val != 0) and (table[int(x)][int(y)] == False):
-            draw_val(val)
+            if maps[int(x)][int(y)] == maps_ans[int(x)][int(y)]:
+                color = (0, 0, 0)
+            else:
+                color = (255, 0, 0)
+            draw_val(val, color)
             print(int(x))
             print(int(y))
             print(val)
