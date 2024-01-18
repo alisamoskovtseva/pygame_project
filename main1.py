@@ -256,8 +256,12 @@ def draw():
         for j in range(9):
             if maps[i][j] != 0:  # цвет фона
                 pygame.draw.rect(screen, (255, 255, 255), (i * dif, j * dif, dif + 1, dif + 1))
-                text1 = font1.render(str(maps[i][j]), 1, (0, 0, 0))  # цвет цифр
-                screen.blit(text1, (i * dif + 15, j * dif + 10))
+                if table[i][j] == True:
+                    text1 = font1.render(str(maps[i][j]), 1, (0, 0, 0))  # цвет цифр
+                    screen.blit(text1, (i * dif + 15, j * dif + 10))
+                else:
+                    text1 = font1.render(str(maps[i][j]), 1, (255, 0, 0))  # цвет цифр
+                    screen.blit(text1, (i * dif + 15, j * dif + 10))
             else:
                 pygame.draw.rect(screen, (255, 255, 255), (i * dif, j * dif, dif + 1, dif + 1))
 
@@ -275,12 +279,11 @@ def draw_val(val, color):
     global table
     print(table)
     if table[int(x)][int(y)] == False:
-        if val != maps_ans[int(y)][int(x)]:
-            text1 = font1.render(str(val), 1, color)
-            screen.blit(text1, (x * dif + 15, y * dif + 15))
-        else:
-            text1 = font1.render(str(val), 1, color)
-            screen.blit(text1, (x * dif + 15, y * dif + 15))
+        text1 = font1.render(str(val), 1, color)
+        screen.blit(text1, (x * dif + 15, y * dif + 15))
+    else:
+        text1 = font1.render(str(val), 1, color)
+        screen.blit(text1, (x * dif + 15, y * dif + 15))
 
 
 # ОБРАБОТКА ОШИБОК(вообще они не нужны, т.к. выводиться текст, а у нас его нет
@@ -318,6 +321,8 @@ def valid(maps, i, j, val, maps_ans):
         #     pygame.draw.line(screen, (255, 122, 0), ((x + i) * dif, y * dif), ((x + i) * dif, y * dif + dif), 7)
 
     return False
+
+
 # for it in range(9):[
 #     if m[i][it] == val:
 #         return False
@@ -510,7 +515,7 @@ if __name__ == '__main__':
             draw_val(val, color)
             print(int(x))
             print(int(y))
-            print(val)
+            print(val, color)
 
             if valid(maps, int(x), int(y), val, maps_ans):
                 table[int(x)][int(y)] = True
