@@ -7,7 +7,7 @@ import os
 pygame.init()
 screen = pygame.display.set_mode((500, 500))
 img = pygame.image.load('data\судоку.jpg')
-pygame.display.set_caption("Aлёна лох объелась блох")
+pygame.display.set_caption("Aлиса лох объелась блох")
 pygame.display.set_icon(img)
 all_sprites = pygame.sprite.Group()
 clock = pygame.time.Clock()
@@ -39,13 +39,13 @@ maps_ans = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0]]
-table = [[True * 9] for _ in range(10)]
+table = [[True, True, True, True, True, True, True, True, True] for _ in range(9)]
 level = 0
-count = 0
+
 
 class Sudoku1:
     def sud(self):
-        global maps, c, side, maps_ans, level
+        global maps, c, side, maps_ans, level, table
         c = 0
         while c != 9:
             c = 0
@@ -70,6 +70,7 @@ class Sudoku1:
                         [0, 0, 0, 0, 0, 0, 0, 0, 0],
                         [0, 0, 0, 0, 0, 0, 0, 0, 0],
                         [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+            table = [[True, True, True, True, True, True, True, True, True] for _ in range(9)]
             for i in range(9):
                 for j in range(9):
 
@@ -105,7 +106,8 @@ class Sudoku1:
         empties = squares * level // 4  # УРОВЕНЬ СЛОЖНОСИ 1-3
         for p in sample(range(squares), empties):
             maps[p // side][p % side] = 0
-
+            table[p // side][p % side] = False
+            # maps[0][0] = 0
         with open("file.txt", "w") as output:
             for i in ans:
                 output.write(str(i))
@@ -268,14 +270,15 @@ def draw():
 
 # заполнение значения
 def draw_val(val):
-    print(valid(maps, int(x), int(y), val, maps_ans))
-    if val != maps_ans[int(y)][int(x)]:
-        color = (0, 0, 0)
-        print(val == maps_ans[int(y)][int(x)])
-    else:
-        color = (255, 0, 0)
-    text1 = font1.render(str(val), 1, color)
-    screen.blit(text1, (x * dif + 15, y * dif + 15))
+    global table
+    print(table)
+    if table[int(x)][int(y)] == False:
+        if val != maps_ans[int(y)][int(x)]:
+            text1 = font1.render(str(val), 1, (255, 0, 0))
+            screen.blit(text1, (x * dif + 15, y * dif + 15))
+        else:
+            text1 = font1.render(str(val), 1, (0, 0, 0))
+            screen.blit(text1, (x * dif + 15, y * dif + 15))
 
 
 # ОБРАБОТКА ОШИБОК(вообще они не нужны, т.к. выводиться текст, а у нас его нет
@@ -296,30 +299,35 @@ def raise_error2():
 
 # проверка подлинности значения
 def valid(maps, i, j, val, maps_ans):
+    global table
+    if table[i][j] == True:
+        return
     if val == maps_ans[i][j]:
         maps[i][j] = val
+        table[i][j] = True
         return True
     else:
         maps[i][j] = 0
-        x = i
-        y = j
-        for i in range(2):
-            pygame.draw.line(screen, (255, 122, 0), (x * dif - 3, (y + i) * dif), (x * dif + dif + 3, (y + i) * dif), 7)
-            pygame.draw.line(screen, (255, 122, 0), ((x + i) * dif, y * dif), ((x + i) * dif, y * dif + dif), 7)
+        table[i][j] = False
+        # x = i
+        # y = j
+        # for i in range(2):
+        #     pygame.draw.line(screen, (255, 122, 0), (x * dif - 3, (y + i) * dif), (x * dif + dif + 3, (y + i) * dif), 7)
+        #     pygame.draw.line(screen, (255, 122, 0), ((x + i) * dif, y * dif), ((x + i) * dif, y * dif + dif), 7)
 
     return False
-    # for it in range(9):[
-    #     if m[i][it] == val:
-    #         return False
-    #     if m[it][j] == val:
-    #         return False
-    # it = i // 3
-    # jt = j // 3
-    # for i in range(it * 3, it * 3 + 3):
-    #     for j in range(jt * 3, jt * 3 + 3):
-    #         if m[i][j] == val:
-    #             return False
-    # return True
+# for it in range(9):[
+#     if m[i][it] == val:
+#         return False
+#     if m[it][j] == val:
+#         return False
+# it = i // 3
+# jt = j // 3
+# for i in range(it * 3, it * 3 + 3):
+#     for j in range(jt * 3, jt * 3 + 3):
+#         if m[i][j] == val:
+#             return False
+# return True
 
 
 # заполнение готовых значений(нам это надо?)
@@ -359,8 +367,7 @@ def solve(maps, i, j):
 
 # после завершения игры картинкаю добавить кнопку, которая перебрысывает на выбор уровня (заново)
 def final():
-    global maps, maps_ans, count
-    count= 0
+    global maps, maps_ans
     maps = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -371,18 +378,29 @@ def final():
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0]]
     running = True
+    x = create_stars()
+    all_sprites = pygame.sprite.Group()
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 return
-        if count == 0 or count == 1:
-            create_stars()
-            count += 1
+        create_stars()
         all_sprites.update()
         fon = pygame.transform.scale(load_image('end_screen.png'), ((width, height)))
         screen.blit(fon, (0, 0))
+        font = pygame.font.Font(None, 30)
+        text_coord = 50
+        intro_text = ["Нажмите на подарок"]
+        for line in intro_text:
+            string_rendered = font.render(line, 1, pygame.Color('white'))
+            intro_rect = string_rendered.get_rect()
+            text_coord += 10
+            intro_rect.top = text_coord
+            intro_rect.x = 10
+            text_coord += intro_rect.height
+            screen.blit(string_rendered, intro_rect)
         all_sprites.draw(screen)
         pygame.display.flip()
         clock.tick(FPS)
@@ -404,7 +422,7 @@ class Feyerverk(pygame.sprite.Sprite):
 
         self.velocity = [dx, dy]
         self.rect.x, self.rect.y = 255, 255
-        self.gravity = 0.5
+        self.gravity = GRAVITY
 
     def update(self):
         self.velocity[1] += self.gravity
@@ -415,11 +433,12 @@ class Feyerverk(pygame.sprite.Sprite):
 
 
 def create_stars():
-    particle_count = 100
-    numbers = range(-10,10)
+    x = []
+    particle_count = 50
+    numbers = range(-5, 6)
     for _ in range(particle_count):
-        Feyerverk(random.choice(numbers), random.choice(numbers))
-
+        x.append(Feyerverk(random.choice(numbers), random.choice(numbers)))
+    return x
 
 
 run = True
@@ -430,6 +449,8 @@ error = 0
 is_true = True
 if __name__ == '__main__':
     start_screen()
+    # a = Sudoku1()
+    # a.sud()
     Sudoku1().sud()
     print(maps, maps_ans, sep='\n')
     run = True
@@ -482,13 +503,13 @@ if __name__ == '__main__':
             else:
                 rs = 1
             flag2 = 0
-        if val != 0:
+        if (val != 0) and (table[int(x)][int(y)] == False):
             draw_val(val)
             print(int(x))
             print(int(y))
             print(val)
             if valid(maps, int(x), int(y), val, maps_ans):
-                is_true = True
+                table[int(x)][int(y)] = True
                 maps[int(x)][int(y)] = val
                 flag1 = 0
             else:
