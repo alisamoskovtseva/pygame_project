@@ -3,7 +3,11 @@ from random import choice, sample
 import pygame
 import sys
 import os
+import pygame
 
+pygame.mixer.init()
+pygame.mixer.music.load('Anna_Asti_-_Carica_76836128.mp3')
+pygame.mixer.music.play(999)
 pygame.init()
 screen = pygame.display.set_mode((500, 500))
 img = pygame.image.load('data\судоку.jpg')
