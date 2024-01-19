@@ -8,7 +8,7 @@ pygame.mixer.init()
 pygame.init()
 screen = pygame.display.set_mode((500, 500))
 img = pygame.image.load('data\судоку.jpg')
-pygame.display.set_caption("судоку")
+pygame.display.set_caption("Судоку")
 pygame.display.set_icon(img)
 all_sprites = pygame.sprite.Group()
 clock = pygame.time.Clock()
@@ -102,7 +102,7 @@ class Sudoku1:
                 ans[i][j] = maps_ans[j][i]
 
         # pереворачиваем масив ответов
-        #print(ans)
+        # print(ans)
 
         squares = side * side
         empties = squares * level // 4  # УРОВЕНЬ СЛОЖНОСИ 1-3
@@ -271,7 +271,7 @@ def draw():
 # заполнение значения
 def draw_val(val, color):
     global table
-    if table[int(x)][int(y)] == False:
+    if not (table[int(x)][int(y)]):
         text1 = font1.render(str(val), 1, color)
         screen.blit(text1, (x * dif + 15, y * dif + 15))
     else:
@@ -297,7 +297,7 @@ def raise_error2():
 # проверка подлинности значения
 def valid(maps, i, j, val, maps_ans):
     global table
-    if table[i][j] == True:
+    if table[i][j]:
         return
     if val == maps_ans[i][j]:
         maps[i][j] = val
@@ -322,7 +322,7 @@ def solve(maps, i, j):
             return True
     pygame.event.pump()
     for it in range(1, 10):
-        if valid(maps, i, j, it) == True:
+        if valid(maps, i, j, it):
             maps[i][j] = it
             global x, y
             x = i
@@ -373,7 +373,7 @@ def final():
             create_stars()
             count += 1
         all_sprites.update()
-        fon = pygame.transform.scale(load_image('end_screen.png'), ((width, height)))
+        fon = pygame.transform.scale(load_image('zayc.jpg'), ((width, height)))
         screen.blit(fon, (0, 0))
         all_sprites.draw(screen)
         pygame.display.flip()
@@ -402,7 +402,7 @@ class Feyerverk(pygame.sprite.Sprite):
         self.velocity[1] += self.gravity
         self.rect.x += self.velocity[0]
         self.rect.y += self.velocity[1]
-        if self.rect.colliderect(screen_rect) == False:
+        if not (self.rect.colliderect(screen_rect)):
             self.kill()
 
 
@@ -474,7 +474,7 @@ if __name__ == '__main__':
             else:
                 rs = 1
             flag2 = 0
-        if (val != 0) and (table[int(x)][int(y)] == False):
+        if (val != 0) and not (table[int(x)][int(y)]):
             if maps[int(x)][int(y)] == maps_ans[int(x)][int(y)]:
                 color = (0, 0, 0)
             else:
