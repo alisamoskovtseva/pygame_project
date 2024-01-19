@@ -6,8 +6,8 @@ import os
 import pygame
 
 pygame.mixer.init()
-pygame.mixer.music.load('Anna_Asti_-_Carica_76836128.mp3')
-pygame.mixer.music.play(999)
+# pygame.mixer.music.load('Anna_Asti_-_Carica_76836128.mp3')
+# pygame.mixer.music.play(999)
 pygame.init()
 screen = pygame.display.set_mode((500, 500))
 img = pygame.image.load('data\судоку.jpg')
@@ -380,7 +380,9 @@ def solve(maps, i, j):
 # после завершения игры картинкаю добавить кнопку, которая перебрысывает на выбор уровня (заново)
 def final():
     global maps, maps_ans, count
-    count= 0
+    pygame.mixer.music.load('Anna_Asti_-_Carica_76836128.mp3')
+    pygame.mixer.music.play(1)
+    count = 0
     maps = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -396,7 +398,9 @@ def final():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
+                pygame.mixer.music.stop()
                 return
+
         if count == 0 or count == 1:
             create_stars()
             count += 1
