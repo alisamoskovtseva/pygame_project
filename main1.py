@@ -1,17 +1,14 @@
 import random
-from random import choice, sample
-import pygame
+from random import sample
 import sys
 import os
 import pygame
 
 pygame.mixer.init()
-# pygame.mixer.music.load('Anna_Asti_-_Carica_76836128.mp3')
-# pygame.mixer.music.play(999)
 pygame.init()
 screen = pygame.display.set_mode((500, 500))
 img = pygame.image.load('data\судоку.jpg')
-pygame.display.set_caption("Aлёна лох объелась блох")
+pygame.display.set_caption("судоку")
 pygame.display.set_icon(img)
 all_sprites = pygame.sprite.Group()
 clock = pygame.time.Clock()
@@ -105,7 +102,7 @@ class Sudoku1:
                 ans[i][j] = maps_ans[j][i]
 
         # pереворачиваем масив ответов
-        print(ans)
+        #print(ans)
 
         squares = side * side
         empties = squares * level // 4  # УРОВЕНЬ СЛОЖНОСИ 1-3
@@ -217,9 +214,6 @@ def game_rules():
                 terminate()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
-                # x=pos[0]
-                # y=pos[1]
-                # if (x > 15 and x < 150 and y > 380 and y < 425) or (x > 190 and x < 320 and y > 380 and y < 425) or (x > 350 and x < 480 and y > 380 and y < 430):
                 get_level(pos)
                 if level:
                     return
@@ -250,11 +244,6 @@ def draw_box():
 
 # отрисовка клеток и их заполнение
 def draw():
-    # global sec
-    #
-    # time.sleep(1)
-    # sec += 1
-    # print(sec)
     if not level:
         game_rules()
     for i in range(9):
@@ -282,7 +271,6 @@ def draw():
 # заполнение значения
 def draw_val(val, color):
     global table
-    print(table)
     if table[int(x)][int(y)] == False:
         text1 = font1.render(str(val), 1, color)
         screen.blit(text1, (x * dif + 15, y * dif + 15))
@@ -291,8 +279,7 @@ def draw_val(val, color):
         screen.blit(text1, (x * dif + 15, y * dif + 15))
 
 
-# ОБРАБОТКА ОШИБОК(вообще они не нужны, т.к. выводиться текст, а у нас его нет
-# понять что это
+# ОБРАБОТКА ОШИБОК
 def raise_error1():
     text1 = font1.render("WRONG !!!", 1, (0, 0, 0))
     screen.blit(text1, (20, 450))
@@ -319,27 +306,8 @@ def valid(maps, i, j, val, maps_ans):
     else:
         maps[i][j] = 0
         table[i][j] = False
-        # x = i
-        # y = j
-        # for i in range(2):
-        #     pygame.draw.line(screen, (255, 122, 0), (x * dif - 3, (y + i) * dif), (x * dif + dif + 3, (y + i) * dif), 7)
-        #     pygame.draw.line(screen, (255, 122, 0), ((x + i) * dif, y * dif), ((x + i) * dif, y * dif + dif), 7)
 
     return False
-
-
-# for it in range(9):[
-#     if m[i][it] == val:
-#         return False
-#     if m[it][j] == val:
-#         return False
-# it = i // 3
-# jt = j // 3
-# for i in range(it * 3, it * 3 + 3):
-#     for j in range(jt * 3, jt * 3 + 3):
-#         if m[i][j] == val:
-#             return False
-# return True
 
 
 # заполнение готовых значений(нам это надо?)
@@ -457,7 +425,6 @@ if __name__ == '__main__':
     # a = Sudoku1()
     # a.sud()
     Sudoku1().sud()
-    print(maps, maps_ans, sep='\n')
     run = True
     while run:
         screen.fill((255, 255, 255))
@@ -468,7 +435,6 @@ if __name__ == '__main__':
                 flag1 = 1
                 pos = pygame.mouse.get_pos()
                 get_cord(pos)
-                print(x, y)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
                     x -= 1
@@ -514,9 +480,6 @@ if __name__ == '__main__':
             else:
                 color = (255, 0, 0)
             draw_val(val, color)
-            print(int(x))
-            print(int(y))
-            print(val, color)
 
             if valid(maps, int(x), int(y), val, maps_ans):
                 table[int(x)][int(y)] = True
